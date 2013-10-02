@@ -24,7 +24,7 @@ sharedExamplesFor(@"a Cedar class fake", ^(NSDictionary *sharedContext) {
 
         context(@"when an instance method is not defined", ^{
             it(@"should return false", ^{
-                [fake respondsToSelector:@selector(wibble_wobble)] should_not be_truthy;
+                [fake respondsToSelector:NSSelectorFromString(@"wibble_wobble")] should_not be_truthy;
             });
         });
     });

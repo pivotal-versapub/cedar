@@ -96,7 +96,7 @@ describe(@"spy_on", ^{
 
     it(@"should not change the methods the given object responds to", ^{
         [incrementer respondsToSelector:@selector(increment)] should be_truthy;
-        [incrementer respondsToSelector:@selector(wibble)] should_not be_truthy;
+        [incrementer respondsToSelector:NSSelectorFromString(@"wibble")] should_not be_truthy;
     });
 
     it(@"should not affect other instances of the same class", ^{

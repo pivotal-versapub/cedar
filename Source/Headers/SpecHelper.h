@@ -2,7 +2,13 @@
 #import "CDRSharedExampleGroupPool.h"
 #import "CDRExampleParent.h"
 
-@interface SpecHelper : NSObject <CDRExampleParent> {
+@protocol SpecSetup <NSObject>
+@optional
+- (void)beforeEach;
+- (void)afterEach;
+@end
+
+@interface SpecHelper : NSObject <CDRExampleParent, SpecSetup> {
     NSMutableDictionary *sharedExampleContext_, *sharedExampleGroups_;
     NSArray *globalBeforeEachClasses_, *globalAfterEachClasses_;
     BOOL shouldOnlyRunFocused_;
