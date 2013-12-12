@@ -23,7 +23,7 @@ sharedExamplesFor(@"a Cedar protocol fake", ^(NSDictionary *sharedContext) {
 
         context(@"when an instance method is not defined", ^{
             it(@"should return false", ^{
-                [fake respondsToSelector:NSSelectorFromString(@"wibble_wobble")] should_not be_truthy;
+                [fake respondsToSelector:@selector(wibble_wobble)] should_not be_truthy;
             });
         });
     });

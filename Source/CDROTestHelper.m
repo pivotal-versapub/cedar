@@ -1,17 +1,9 @@
 #import "CDROTestHelper.h"
 #import <objc/runtime.h>
 
-@protocol CDROTestRunner <NSObject>
-@optional
-- (void)specifiedTestSuite;
-- (void)hasSucceeded;
-- (void)runTests:(id)ignored;
-@end
-
-
 // This is exact copy of SenTestProbe +runTests: (https://github.com/jy/SenTestingKit/blob/master/SenTestProbe.m)
 // except that it does not call exit() at the end.
-int CDRRunOCUnitTests(id<CDROTestRunner> self, SEL _cmd, id ignored) {
+int CDRRunOCUnitTests(id self, SEL _cmd, id ignored) {
     BOOL hasFailed = NO;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

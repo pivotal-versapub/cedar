@@ -149,13 +149,13 @@ void fail(NSString *reason) {
         return;
     }
 
-    NSUInteger bestAddressIndex = [children indexOfObject:self.rootGroup];
+    int bestAddressIndex = [children indexOfObject:self.rootGroup];
 
     // Matches closest example/group located on or below specifed line number
     // (only takes into account start of an example/group)
-    for (NSInteger i = 0, shortestDistance = -1; i < addresses.count; i++) {
+    for (int i = 0, shortestDistance = -1; i < addresses.count; i++) {
         NSUInteger address = [[addresses objectAtIndex:i] unsignedIntegerValue];
-        NSInteger distance = lineNumber - [self.symbolicator lineNumberForStackAddress:address];
+        int distance = lineNumber - [self.symbolicator lineNumberForStackAddress:address];
 
         if (distance >= 0 && (distance < shortestDistance || shortestDistance == -1) ) {
             bestAddressIndex = i;

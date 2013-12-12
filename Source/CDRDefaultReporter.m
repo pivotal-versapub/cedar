@@ -166,10 +166,10 @@
 
 - (void)printNestedFullTextForExample:(CDRExample *)example stateToken:(NSString *)token {
     static NSMutableArray *previousBranch = nil;
-    NSUInteger previousBranchLength = previousBranch.count;
+    int previousBranchLength = previousBranch.count;
 
     NSMutableArray *exampleBranch = [example fullTextInPieces];
-    NSUInteger exampleBranchLength = exampleBranch.count;
+    int exampleBranchLength = exampleBranch.count;
 
     BOOL onPreviousBranch = YES;
 
