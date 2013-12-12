@@ -25,7 +25,7 @@ void exitWithStatusFromUIApplication(int status) {
     UIApplication *application = [UIApplication sharedApplication];
     SEL _terminateWithStatusSelector = NSSelectorFromString(@"_terminateWithStatus:");
     if ([application respondsToSelector:_terminateWithStatusSelector]) {
-        [application performSelector:_terminateWithStatusSelector withObject:(id)status];
+        [application performSelector:_terminateWithStatusSelector withObject:(id)(NSInteger)status];
     } else {
         exit(status);
     }
