@@ -34,6 +34,7 @@ NSUInteger CDRCallerStackAddress() {
 @end
 
 @implementation CDRSymbolicator
+
 @synthesize
     addresses = addresses_,
     fileNames = fileNames_,
@@ -197,7 +198,7 @@ NSUInteger CDRCallerStackAddress() {
         [arguments addObject:[NSString stringWithFormat:@"%lx", (long)address.unsignedIntegerValue]];
     }
 
-    NSString *output = [self.class shellOutWithCommand:@"/usr/bin/atos" arguments:arguments];
+    NSString *output = [self.class shellOutWithCommand:@"/Applications/Xcode.app/Contents/Developer/usr/bin/atos" arguments:arguments];
     self.outputLines = [output componentsSeparatedByString:@"\n"];
 }
 
@@ -272,7 +273,7 @@ NSUInteger CDRCallerStackAddress() {
     long slide = _dyld_get_image_vmaddr_slide(0);
 
     // If running with SenTestingKit use test bundle executable
-    if (objc_getClass("SenTestProbe"))
+    if (objc_getClass("SenTestProbe") || objc_getClass("XCTestProbe"))
         [self getOtestBundleExecutablePath:&executablePath slide:&slide];
 
     return [[[self alloc] initWithExecutablePath:executablePath slide:slide addresses:nil] autorelease];
@@ -280,7 +281,7 @@ NSUInteger CDRCallerStackAddress() {
 
 + (void)getOtestBundleExecutablePath:(NSString **)executablePath slide:(long *)slide {
     for (int i=0; i<_dyld_image_count(); i++) {
-        if (strstr(_dyld_get_image_name(i), ".octest/") != NULL) {
+        if (strstr(_dyld_get_image_name(i), ".octest/") != NULL || strstr(_dyld_get_image_name(i), ".xctest/") != NULL) {
             *executablePath = [NSString stringWithUTF8String:_dyld_get_image_name(i)];
             *slide = _dyld_get_image_vmaddr_slide(i);
             return;

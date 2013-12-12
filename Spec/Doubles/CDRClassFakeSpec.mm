@@ -10,6 +10,7 @@ SPEC_BEGIN(CDRClassFakeSpec)
 
 sharedExamplesFor(@"a Cedar class fake", ^(NSDictionary *sharedContext) {
     __block SimpleIncrementer<CedarDouble> *fake;
+    SEL wibble_wobbleSelector = NSSelectorFromString(@"wibble_wobble");
 
     beforeEach(^{
         fake = [sharedContext objectForKey:@"double"];
@@ -24,7 +25,7 @@ sharedExamplesFor(@"a Cedar class fake", ^(NSDictionary *sharedContext) {
 
         context(@"when an instance method is not defined", ^{
             it(@"should return false", ^{
-                [fake respondsToSelector:@selector(wibble_wobble)] should_not be_truthy;
+                [fake respondsToSelector:wibble_wobbleSelector] should_not be_truthy;
             });
         });
     });
@@ -137,17 +138,53 @@ describe(@"CDRClassFake", ^{
         });
     });
 
-    describe(@"using Key Value Coding to set values on a class fake", ^{
-        __block ObjectWithWeakDelegate *niceFake;
+    describe(@"using Key Value Coding to set values", ^{
+        __block ObjectWithWeakDelegate *fake;
 
-        beforeEach(^{
-            niceFake = nice_fake_for([ObjectWithWeakDelegate class]);
+        describe(@"a nice fake", ^{
+            beforeEach(^{
+                fake = nice_fake_for([ObjectWithWeakDelegate class]);
+            });
+
+            it(@"should not blow up, silently failing when setValue:forKey: is invoked", ^{
+                [fake setValue:nice_fake_for(@protocol(ExampleDelegate)) forKey:@"delegate"];
+
+                fake.delegate should be_nil;
+            });
         });
 
-        it(@"should not blow up, silently failing when setValue:forKey: is invoked", ^{
-            [niceFake setValue:nice_fake_for(@protocol(ExampleDelegate)) forKey:@"delegate"];
+        describe(@"a strict fake", ^{
+            __block id delegate;
+            beforeEach(^{
+                delegate = nice_fake_for(@protocol(ExampleDelegate));
+                fake = fake_for([ObjectWithWeakDelegate class]);
+            });
 
-            niceFake.delegate should be_nil;
+            context(@"when not stubbed first", ^{
+                it(@"should blow up when setValue:forKey: is invoked", ^{
+                    ^{
+                        [fake setValue:delegate forKey:@"delegate"];
+                    } should raise_exception.with_name(NSInternalInconsistencyException).with_reason([NSString stringWithFormat:@"Attempting to set value <%@> for key <%@>, which must be stubbed first", delegate, @"delegate"]);
+                });
+            });
+
+            context(@"when stubbed", ^{
+                it(@"should happily receive -setValue:forKey:", ^{
+                    fake stub_method(@selector(setValue:forKey:));
+
+                    [fake setValue:delegate forKey:@"delegate"];
+
+                    fake should have_received(@selector(setValue:forKey:)).with(delegate).and_with(@"delegate");
+                });
+
+                it(@"should happily receive -setValue:forKeyPath:", ^{
+                    fake stub_method(@selector(setValue:forKeyPath:));
+
+                    [fake setValue:delegate forKeyPath:@"delegate"];
+
+                    fake should have_received(@selector(setValue:forKeyPath:)).with(delegate).and_with(@"delegate");
+                });
+            });
         });
     });
 });
